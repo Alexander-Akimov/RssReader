@@ -18,7 +18,8 @@ public class RssDbSchema {
         public static final String GUID = "guid";
         public static final String TITLE = "title";
         public static final String DESCRIPTION = "description";
-        public static final String CHANNEL = "channel";
+        public static final String LINK = "link";
+        public static final String CHANNEL_ID = "channel_id";
     }
 
     public static final String SQL_CREATE_CHANNEL_TABLE =
@@ -34,7 +35,8 @@ public class RssDbSchema {
                     ItemTable.GUID + ", " +
                     ItemTable.TITLE + ", " +
                     ItemTable.DESCRIPTION + ", " +
-                    ItemTable.CHANNEL + ")";
+                    ItemTable.LINK + ", " +
+                    ItemTable.CHANNEL_ID + ")";
 
     public static final String SQL_DELETE_CHANNEL_TABLE =
             "DROP TABLE IF EXISTS " + ChannelTable.TABLE_NAME;

@@ -1,7 +1,7 @@
 package com.akimov.rssreader.model;
 
 public class RssItem {
-    public String guid;
+    public String itemId;
     public String title;
     public String description;
     public String link;

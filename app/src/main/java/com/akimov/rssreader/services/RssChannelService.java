@@ -1,32 +1,17 @@
 package com.akimov.rssreader.services;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.CursorWrapper;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Xml;
-import android.widget.Toast;
 
 import com.akimov.rssreader.database.ItemsRepository;
-import com.akimov.rssreader.database.RssBaseHelper;
-import com.akimov.rssreader.database.RssDbSchema;
-import com.akimov.rssreader.database.RssItemCursorWrapper;
 import com.akimov.rssreader.database.RssLoader;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RssChannelService {
 
@@ -39,6 +24,7 @@ public class RssChannelService {
     public Channel selectedChannel = null;
     private Channel loadedChannel = null;
 
+    private final String TAG = "RssChannelService";
 
     private static RssChannelService sInstance;
 
@@ -66,29 +52,76 @@ public class RssChannelService {
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     public void getChannelItems(DataLoadingCallback callback) {
 
         try {
-            mRssLoader.loadRssItems(selectedChannel.getLink(), success -> {
-                if (success) {
-                    loadedChannel = mRssLoader.getChannel();
-                    channelItems.clear();
-                    channelItems.addAll(mRssLoader.getChannelItems());
+            if (isNetworkAvailable()) {
+                mRssLoader.loadRssItems(selectedChannel.getLink(), success -> {
+                    if (success) {
+                        loadedChannel = mRssLoader.getChannel();
+                        channelItems.clear();
+                        channelItems.addAll(mRssLoader.getChannelItems());
+
+                        // Log.d("THREAD 1", "" + Thread.currentThread().getId());
+
+                        new StoreItemsTask(mItemsRepository, channelItems, selectedChannel.getId()).execute();
+                    }
                     callback.complete(success);
-                }
-                else
-                    callback.complete(success);
-            });
-            //channels = mItemsRepository.getChannels();
-            //
+                });
+            }
+            else
+            {
+                channelItems.clear();
+                channelItems.addAll(mItemsRepository.getChannelItems(selectedChannel.getId()));
+                callback.complete(true);
+            }
         } catch (Exception e) {
             callback.complete(false);
         }
     }
 
+    private class StoreItemsTask extends AsyncTask<Void, Void, Boolean> {
+
+        private ItemsRepository mRepository;
+        private ArrayList<RssItem> mItems = new ArrayList<>();
+        private String mChannelId;
+
+        StoreItemsTask(ItemsRepository repository, ArrayList<RssItem> items, String channelId) {
+            mRepository = repository;
+            mChannelId = channelId;
+            mItems.clear();
+            mItems.addAll(items);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            try {
+                // Log.d("THREAD 2", "" + Thread.currentThread().getId());
+                mRepository.insertRssItems(mItems, mChannelId);
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, "Error", e);
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            //mCallback.complete(success);
+        }
+    }
+
     public void addChannel(Channel channel, DataLoadingCallback callback) {
         try {
-            mItemsRepository.addChannel(channel);
+            mItemsRepository.insertChannel(channel);
             channels.clear();
             channels.addAll(mItemsRepository.getChannels());
 
@@ -96,6 +129,10 @@ public class RssChannelService {
         } catch (Exception e) {
             callback.complete(false);
         }
+    }
+
+    public void addChannelItems() {
+
     }
 
 }

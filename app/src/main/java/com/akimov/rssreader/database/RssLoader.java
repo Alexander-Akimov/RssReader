@@ -76,8 +76,8 @@ public class RssLoader {
     private InputStream downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
+        //conn.setReadTimeout(10000 /* milliseconds */);
+       // conn.setConnectTimeout(15000 /* milliseconds */);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");
@@ -122,7 +122,7 @@ public class RssLoader {
                     }
                 }
 
-                Log.d("MyXmlParser", "Parsing name ==> " + name);
+                //Log.d("MyXmlParser", "Parsing name ==> " + name);
                 String result = "";
                 if (xmlPullParser.next() == XmlPullParser.TEXT) {
                     result = xmlPullParser.getText();
@@ -142,7 +142,7 @@ public class RssLoader {
                         RssItem item = new RssItem(title, description, link, "");
                         items.add(item);
                     } else {
-                        mChannel = new Channel("", title, link, description);
+                      //  mChannel = new Channel("", title, link, description);
                     }
 
                     title = null;

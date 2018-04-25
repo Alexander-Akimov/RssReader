@@ -1,6 +1,8 @@
 package com.akimov.rssreader;
 
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         progressBar = findViewById(R.id.progressBar);
         //progressBar.setVisibility(View.VISIBLE);
 
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mRssChannelService = RssChannelService.get(this.getApplicationContext());
+        mRssChannelService = RssChannelService.get(this);
         mRssChannelService.getChannels(onGetChannels);
 
         mChannelsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mRssChannelService.channels);
@@ -136,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        //mDbHelper.close();
+        super.onDestroy();
+    }
 
     @Override
     public void onBackPressed() {
