@@ -53,7 +53,6 @@ public class RssChannelService {
         mContext = context;
         mItemsRepository = new ItemsRepository(context);
         mRssLoader = new RssLoader();
-
     }
 
     public void getChannels(DataLoadingCallback callback) {
@@ -77,6 +76,8 @@ public class RssChannelService {
                     channelItems.addAll(mRssLoader.getChannelItems());
                     callback.complete(success);
                 }
+                else
+                    callback.complete(success);
             });
             //channels = mItemsRepository.getChannels();
             //
@@ -84,9 +85,17 @@ public class RssChannelService {
             callback.complete(false);
         }
     }
-    public void addChannel(Channel channel) {
 
+    public void addChannel(Channel channel, DataLoadingCallback callback) {
+        try {
+            mItemsRepository.addChannel(channel);
+            channels.clear();
+            channels.addAll(mItemsRepository.getChannels());
+
+            callback.complete(true);
+        } catch (Exception e) {
+            callback.complete(false);
+        }
     }
-
 
 }
