@@ -51,9 +51,9 @@ public class RssBaseHelper extends SQLiteOpenHelper {
                         "        Ведущие:\n" +
                         "        Владимир Ильинский, Михаил Кузищев");
 
-        Channel channel3 = new Channel("", "http://www.radiorecord.ru/rss.xml",
-                "Radio Record",
-                "Программы Радио Рекорд");
+        Channel channel3 = new Channel("", "https://www.svoboda.org/api/zogqpoegmopo",
+                "Новости - политика - Радио Свобода",
+                "Новости - политика");
 
         ArrayList<Channel> channels = new ArrayList<>();
         channels.add(channel1);
@@ -69,8 +69,5 @@ public class RssBaseHelper extends SQLiteOpenHelper {
             db.insert(RssDbSchema.ChannelTable.TABLE_NAME, null, values);
         }
     }
-
-
-
 }
 

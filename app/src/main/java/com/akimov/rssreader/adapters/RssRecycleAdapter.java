@@ -48,6 +48,7 @@ public class RssRecycleAdapter extends RecyclerView.Adapter<RssRecycleAdapter.It
         private TextView mItemTitle;
         private TextView mItemDescription;
         private TextView mItemLink;
+        private RssItem mItem;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -57,11 +58,12 @@ public class RssRecycleAdapter extends RecyclerView.Adapter<RssRecycleAdapter.It
         }
 
         public void bindRssItem(RssItem rssItem, ItemViewClick itemClick) {
+            mItem = rssItem;
             mItemClick = itemClick;
             mItemTitle.setText(rssItem.title);
             mItemDescription.setText(rssItem.description);
             mItemLink.setText(rssItem.link);
-            itemView.setOnClickListener((view) -> mItemClick.handleClick(rssItem));
+            itemView.setOnClickListener((view) -> mItemClick.handleClick(mItem));
         }
     }
 }
