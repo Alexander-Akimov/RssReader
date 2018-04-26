@@ -1,4 +1,4 @@
-package com.akimov.rssreader.database;
+package com.akimov.rssreader.services;
 
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -58,9 +58,9 @@ public class RssLoader {
                 mChannelItems = parseFeed(inputStream);
                 return true;
             } catch (IOException e) {
-                Log.e(TAG, "Error", e);
+                Log.e(TAG, "Error: " + e.getLocalizedMessage());
             } catch (XmlPullParserException e) {
-                Log.e(TAG, "Error", e);
+                Log.e(TAG, "Error: " + e.getLocalizedMessage());
             }
             return false;
         }
@@ -77,7 +77,7 @@ public class RssLoader {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //conn.setReadTimeout(10000 /* milliseconds */);
-       // conn.setConnectTimeout(15000 /* milliseconds */);
+        // conn.setConnectTimeout(15000 /* milliseconds */);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");
@@ -142,7 +142,7 @@ public class RssLoader {
                         RssItem item = new RssItem(title, description, link, "");
                         items.add(item);
                     } else {
-                      //  mChannel = new Channel("", title, link, description);
+                        //  mChannel = new Channel("", title, link, description);
                     }
 
                     title = null;

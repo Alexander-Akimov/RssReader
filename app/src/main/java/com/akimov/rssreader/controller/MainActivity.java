@@ -1,8 +1,7 @@
-package com.akimov.rssreader;
+package com.akimov.rssreader.controller;
 
-import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,18 +14,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akimov.rssreader.R;
 import com.akimov.rssreader.adapters.ItemViewClick;
 import com.akimov.rssreader.adapters.RssRecycleAdapter;
+import com.akimov.rssreader.databinding.AddChannelDialogBinding;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
 import com.akimov.rssreader.services.DataLoadingCallback;
 import com.akimov.rssreader.services.RssChannelService;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +48,12 @@ public class MainActivity extends AppCompatActivity {
         //progressBar.setVisibility(View.VISIBLE);
 
         RecyclerView channelItemsView = findViewById(R.id.itemsListView);
-        ListView channelList = findViewById(R.id.channel_list);
+
+        SwipeMenuListView channelList = findViewById(R.id.channel_list);
+        channelList.setOnMenuItemClickListener(menuItemClickListener);
+        channelList.setMenuCreator(creator);
+        channelList.setSwipeDirection(SwipeMenuListView.DIRECTION_RIGHT);
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,13 +72,78 @@ public class MainActivity extends AppCompatActivity {
         channelList.setAdapter(mChannelsAdapter);
         channelList.setOnItemClickListener(onItemClickListener);
 
-
         mRssRecycleAdapter = new RssRecycleAdapter(mRssChannelService.channelItems, onRssItemClicked);
         channelItemsView.setAdapter(mRssRecycleAdapter);
         channelItemsView.setLayoutManager(new LinearLayoutManager(this));
         //channelItemsView.setHasFixedSize(true);
     }
 
+    private SwipeMenuCreator creator = menu -> {
+        // create "open" item
+        SwipeMenuItem editItem = new SwipeMenuItem(
+                getApplicationContext());
+        // set item background
+        editItem.setBackground(new ColorDrawable(Color.rgb(0xdf, 0xdf,
+                0xff)));
+        // set item width
+        editItem.setWidth(170);
+        editItem.setIcon(R.drawable.ic_edit);
+        // set item title
+        // editItem.setTitle("Изменить");
+        // set item title fontsize
+        // editItem.setTitleSize(14);
+        // set item title font color
+        editItem.setTitleColor(Color.WHITE);
+        // add to menu
+        menu.addMenuItem(editItem);
+
+        // create "delete" item
+        SwipeMenuItem deleteItem = new SwipeMenuItem(
+                getApplicationContext());
+        // set item background
+        deleteItem.setBackground(new ColorDrawable(Color.rgb(0xFf,
+                0xbF, 0xc9)));
+        // set item width
+        deleteItem.setWidth(170);
+        // set a icon
+        deleteItem.setIcon(R.drawable.ic_delete);
+        // add to menu
+        menu.addMenuItem(deleteItem);
+    };
+
+
+    private SwipeMenuListView.OnMenuItemClickListener menuItemClickListener = (position, menu, index) -> {
+        Channel channel = mChannelsAdapter.getItem(position);
+        switch (index) {
+            case 0:
+                // edit
+                View dialogView = getLayoutInflater().inflate(R.layout.add_channel_dialog, null);
+                AddChannelDialogBinding binding = AddChannelDialogBinding.bind(dialogView);
+                binding.setChannel(channel);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog dialog = builder.setView(binding.getRoot())
+                        .setPositiveButton("Изменить", null)
+                        .setNegativeButton("Отмена", null).show();
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+
+                    if (channel != null && channel.isValid()) {
+                        Toast.makeText(this, "Пожалуйста заполните пустые поля", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mRssChannelService.updateChannel(channel, this.onReloadChannels);
+                        dialog.dismiss();
+                    }
+                });
+                break;
+            case 1:
+                // delete
+                mRssChannelService.deleteChannel(channel.getId(), this.onReloadChannels);
+                break;
+        }
+        // false : close the menu; true : not close the menu
+        return false;
+    };
 
     private AdapterView.OnItemClickListener onItemClickListener = (adapterView, view, i, l) -> {
         mRssChannelService.selectedChannel = mRssChannelService.channels.get(i);
@@ -92,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
     private DataLoadingCallback onReloadChannels = (boolean success) -> {
         if (success) {
             if (mRssChannelService.channels.size() > 0) {
@@ -114,26 +187,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addChannelBtnClicked(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         View dialogView = getLayoutInflater().inflate(R.layout.add_channel_dialog, null);
-        EditText channelTitle = dialogView.findViewById(R.id.addChannelTitleTxt);
-        EditText channelDesc = dialogView.findViewById(R.id.addChannelDescTxt);
-        EditText channelUrl = dialogView.findViewById(R.id.addChannelUrl);
+        AddChannelDialogBinding binding = AddChannelDialogBinding.bind(dialogView);
 
-        AlertDialog dialog = builder.setView(dialogView)
+        Channel channel = new Channel("", "", "", "");
+        binding.setChannel(channel);
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        AlertDialog dialog = builder.setView(binding.getRoot())
+                //.setTitle(R.string.add_dialog_title)
                 .setPositiveButton("Добавить", null)
                 .setNegativeButton("Отмена", null).show();
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view1 -> {
-            String title = channelTitle.getText().toString();
-            String description = channelDesc.getText().toString();
-            String url = channelUrl.getText().toString();
-            if (title.isEmpty() && description.isEmpty() && url.isEmpty()) {
+            if (channel.isValid()) {
                 Toast.makeText(this, "Пожалуйста заполните пустые поля", Toast.LENGTH_SHORT).show();
             } else {
-                Channel channel = new Channel("", url, title, description);
-                mRssChannelService.addChannel(channel, onReloadChannels);
+                mRssChannelService.addChannel(channel, this.onReloadChannels);
                 dialog.dismiss();
             }
         });

@@ -1,52 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
+<layout xmlns:adroid="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="channel" type="com.akimov.rssreader.model.Channel"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="26dp"
-        android:text="Добавить подписку"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/addChannelTitleTxt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:ems="10"
-        android:hint="title"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
+        <EditText
+            android:id="@+id/channelTitleTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:ems="10"
+            android:hint="title"
+            android:text="@={channel.title}"
+            android:inputType="textPersonName"
+            android:textColor="@android:color/darker_gray" />
 
-    <EditText
-        android:id="@+id/addChannelDescTxt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:ems="10"
-        android:hint="description"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
+        <EditText
+            android:id="@+id/channelDescTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:ems="10"
+            android:hint="description"
+            android:text="@={channel.description}"
+            android:inputType="textPersonName"
+            android:textColor="@android:color/darker_gray" />
 
-    <EditText
-        android:id="@+id/addChannelUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:ems="10"
-        android:hint="url"
-        android:inputType="textUri"
-        android:textColor="@android:color/darker_gray" />
-</LinearLayout>
+        <EditText
+            android:id="@+id/channelUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:ems="10"
+            android:hint="url"
+            android:text="@={channel.link}"
+            android:inputType="textUri"
+            android:textColor="@android:color/darker_gray" />
+    </LinearLayout>
+</layout>

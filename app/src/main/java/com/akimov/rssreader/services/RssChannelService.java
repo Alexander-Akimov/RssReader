@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.akimov.rssreader.database.ItemsRepository;
-import com.akimov.rssreader.database.RssLoader;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
 
@@ -41,6 +40,13 @@ public class RssChannelService {
         mRssLoader = new RssLoader();
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     public void getChannels(DataLoadingCallback callback) {
         try {
             channels.clear();
@@ -50,13 +56,6 @@ public class RssChannelService {
         } catch (Exception e) {
             callback.complete(false);
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) mContext.getSystemService(mContext.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public void getChannelItems(DataLoadingCallback callback) {
@@ -75,13 +74,44 @@ public class RssChannelService {
                     }
                     callback.complete(success);
                 });
-            }
-            else
-            {
+            } else {
                 channelItems.clear();
                 channelItems.addAll(mItemsRepository.getChannelItems(selectedChannel.getId()));
                 callback.complete(true);
             }
+        } catch (Exception e) {
+            callback.complete(false);
+        }
+    }
+
+    public void addChannel(Channel channel, DataLoadingCallback callback) {
+        try {
+            mItemsRepository.insertChannel(channel);
+            channels.clear();
+            channels.addAll(mItemsRepository.getChannels());
+
+            callback.complete(true);
+        } catch (Exception e) {
+            callback.complete(false);
+        }
+    }
+
+    public void updateChannel(Channel channel, DataLoadingCallback callback) {
+        try {
+            mItemsRepository.updateChannel(channel);
+            callback.complete(true);
+        } catch (Exception e) {
+            callback.complete(false);
+        }
+    }
+
+    public void deleteChannel(String channelId, DataLoadingCallback callback) {
+        try {
+            mItemsRepository.deleteChannel(channelId);
+            channels.clear();
+            channels.addAll(mItemsRepository.getChannels());
+
+            callback.complete(true);
         } catch (Exception e) {
             callback.complete(false);
         }
@@ -105,7 +135,7 @@ public class RssChannelService {
 
             try {
                 // Log.d("THREAD 2", "" + Thread.currentThread().getId());
-                mRepository.insertRssItems(mItems, mChannelId);
+                mRepository.insertChannelItems(mItems, mChannelId);
                 return true;
             } catch (Exception e) {
                 Log.e(TAG, "Error", e);
@@ -119,20 +149,7 @@ public class RssChannelService {
         }
     }
 
-    public void addChannel(Channel channel, DataLoadingCallback callback) {
-        try {
-            mItemsRepository.insertChannel(channel);
-            channels.clear();
-            channels.addAll(mItemsRepository.getChannels());
 
-            callback.complete(true);
-        } catch (Exception e) {
-            callback.complete(false);
-        }
-    }
 
-    public void addChannelItems() {
-
-    }
 
 }

@@ -14,6 +14,8 @@ import com.akimov.rssreader.model.RssItem;
 import java.util.ArrayList;
 
 public class ItemsRepository {
+
+    private final String TAG = "ItemsRepository";
     private SQLiteDatabase mDatabase;
 
     public ItemsRepository(Context context) {
@@ -36,9 +38,9 @@ public class ItemsRepository {
         return new ChannelCursorWrapper(cursor);
     }
 
-    private RssItemCursorWrapper queryChannelItems(String id) {
+    private ChannelItemsCursorWrapper queryChannelItems(String id) {
         String selection = ItemTable.CHANNEL_ID + " = ?";
-        String[] selectionArgs = { id };
+        String[] selectionArgs = {id};
 
         Cursor cursor = mDatabase.query(
                 ItemTable.TABLE_NAME,
@@ -49,7 +51,7 @@ public class ItemsRepository {
                 null,
                 null
         );
-        return new RssItemCursorWrapper(cursor);
+        return new ChannelItemsCursorWrapper(cursor);
     }
 
     public ArrayList<Channel> getChannels() {
@@ -64,18 +66,6 @@ public class ItemsRepository {
         return channels;
     }
 
-    public ArrayList<RssItem> getChannelItems(String id) {
-        ArrayList<RssItem> rssItems = new ArrayList<>();
-        try (RssItemCursorWrapper cursor = queryChannelItems(id)) {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                rssItems.add(cursor.getChannel());
-                cursor.moveToNext();
-            }
-        }
-        return rssItems;
-    }
-
     public void insertChannel(Channel channel) {
         ContentValues values = new ContentValues();
         values.put(ChannelTable.TITLE, channel.getTitle());
@@ -85,25 +75,73 @@ public class ItemsRepository {
         long newRowId = mDatabase.insert(ChannelTable.TABLE_NAME, null, values);
     }
 
-    public void insertRssItems(ArrayList<RssItem> rssItems, String channelId) {
-        //Log.d("THREAD 3", "" + Thread.currentThread().getId());
+    public void updateChannel(Channel channel) {
+        ContentValues values = new ContentValues();
+        values.put(ChannelTable.TITLE, channel.getTitle());
+        values.put(ChannelTable.DESCRIPTION, channel.getDescription());
+        values.put(ChannelTable.LINK, channel.getLink());
 
-        // Define 'where' part of query.
-        String selection = ItemTable.CHANNEL_ID + " LIKE ?";
-        // Specify arguments in placeholder order.
-        String[] selectionArgs = {channelId};
-        // Issue SQL statement.
-        int deletedRows = mDatabase.delete(ItemTable.TABLE_NAME, selection, selectionArgs);
-
-        for (RssItem item : rssItems) {
-            ContentValues values = new ContentValues();
-            values.put(ItemTable.TITLE, item.title);
-            values.put(ItemTable.DESCRIPTION, item.description);
-            values.put(ItemTable.LINK, item.link);
-            values.put(ItemTable.CHANNEL_ID, channelId);
-
-            long newRowId = mDatabase.insert(ItemTable.TABLE_NAME, null, values);
-        }/**/
+        int count = mDatabase.update(
+                ChannelTable.TABLE_NAME,
+                values,
+                ChannelTable._ID + " LIKE ?",
+                new String[]{channel.getId()});
     }
 
+    public void deleteChannel(String channelId) {
+
+        mDatabase.beginTransaction();
+        try {
+            int deletedItems = mDatabase.delete(ItemTable.TABLE_NAME,
+                    ItemTable.CHANNEL_ID + " LIKE ?",
+                    new String[]{channelId});
+
+            int deletedChannels = mDatabase.delete(ChannelTable.TABLE_NAME,
+                    ChannelTable._ID + " LIKE ?",
+                    new String[]{channelId});
+            mDatabase.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
+
+    public ArrayList<RssItem> getChannelItems(String id) {
+        ArrayList<RssItem> rssItems = new ArrayList<>();
+        try (ChannelItemsCursorWrapper cursor = queryChannelItems(id)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                rssItems.add(cursor.getChannel());
+                cursor.moveToNext();
+            }
+        }
+        return rssItems;
+    }
+
+    public void insertChannelItems(ArrayList<RssItem> rssItems, String channelId) {
+        //Log.d("THREAD 3", "" + Thread.currentThread().getId());
+        mDatabase.beginTransaction();
+        try {
+            int deletedRows = mDatabase.delete(ItemTable.TABLE_NAME,
+                    ItemTable.CHANNEL_ID + " LIKE ?",
+                    new String[]{channelId});
+
+            for (RssItem item : rssItems) {
+                ContentValues values = new ContentValues();
+                values.put(ItemTable.TITLE, item.title);
+                values.put(ItemTable.DESCRIPTION, item.description);
+                values.put(ItemTable.LINK, item.link);
+                values.put(ItemTable.CHANNEL_ID, channelId);
+
+                long newRowId = mDatabase.insert(ItemTable.TABLE_NAME, null, values);
+            }
+            mDatabase.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+        } finally {
+            mDatabase.endTransaction();
+        }
+    }
 }

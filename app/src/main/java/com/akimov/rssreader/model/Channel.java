@@ -20,6 +20,10 @@ public class Channel {
         return mTitle;
     }
 
+    public boolean isValid() {
+        return mTitle.isEmpty() && mDescription.isEmpty() && mLink.isEmpty();
+    }
+
     public String getLink() {
         return mLink;
     }
@@ -34,5 +38,22 @@ public class Channel {
 
     public String getId() {
         return mId;
+    }
+
+
+    public void setId(String id) {
+        mId = id;
+    }
+
+    public void setLink(String link) {
+        mLink = link;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
     }
 }

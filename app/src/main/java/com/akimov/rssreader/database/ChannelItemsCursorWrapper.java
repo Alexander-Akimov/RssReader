@@ -6,8 +6,8 @@ import android.database.CursorWrapper;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
 
-public class RssItemCursorWrapper extends CursorWrapper {
-    public RssItemCursorWrapper(Cursor cursor) {
+public class ChannelItemsCursorWrapper extends CursorWrapper {
+    public ChannelItemsCursorWrapper(Cursor cursor) {
         super(cursor);
     }
 
