@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         editItem.setBackground(new ColorDrawable(Color.rgb(0xdf, 0xdf,
                 0xff)));
         // set item width
-        editItem.setWidth(170);
+        editItem.setWidth(100);
         editItem.setIcon(R.drawable.ic_edit);
         // set item title
         // editItem.setTitle("Изменить");
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         deleteItem.setBackground(new ColorDrawable(Color.rgb(0xFf,
                 0xbF, 0xc9)));
         // set item width
-        deleteItem.setWidth(170);
+        deleteItem.setWidth(100);
         // set a icon
         deleteItem.setIcon(R.drawable.ic_delete);
         // add to menu
