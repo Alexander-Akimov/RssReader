@@ -9,6 +9,7 @@ import android.util.Log;
 import com.akimov.rssreader.database.ItemsRepository;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
+import com.akimov.rssreadermvp.model.ChannelModel;
 
 import java.util.ArrayList;
 
@@ -148,6 +149,7 @@ public class RssChannelService {
             //mCallback.complete(success);
         }
     }
+
 
 
 

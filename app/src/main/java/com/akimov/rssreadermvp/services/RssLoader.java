@@ -1,12 +1,13 @@
-package com.akimov.rssreader.services;
+package com.akimov.rssreadermvp.services;
 
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 
-import com.akimov.rssreader.model.Channel;
-import com.akimov.rssreader.model.RssItem;
+import com.akimov.rssreader.services.DataLoadingCallback;
+import com.akimov.rssreadermvp.model.ChannelModel;
+import com.akimov.rssreadermvp.model.RssItemModel;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -16,28 +17,21 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
 
 public class RssLoader {
     private final String TAG = "RssLoader";
-    private Channel mChannel = null;
-    private ArrayList<RssItem> mChannelItems = null;
+    private ChannelModel mChannel = null;
+    private ArrayList<RssItemModel> mChannelItems = null;
 
     public void loadRssItems(String url, DataLoadingCallback callback) {
         new FetchFeedTask(callback).execute(url);
     }
 
-    public RssLoader() {
-
-    }
-
-    public Channel getChannel() {
+    public ChannelModel getChannel() {
         return mChannel;
     }
 
-    public ArrayList<RssItem> getChannelItems() {
+    public ArrayList<RssItemModel> getChannelItems() {
         return mChannelItems;
     }
 
@@ -93,12 +87,12 @@ public class RssLoader {
         return conn.getInputStream();
     }
 
-    public ArrayList<RssItem> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
+    public ArrayList<RssItemModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
         String title = null;
         String link = null;
         String description = null;
         boolean isItem = false;
-        ArrayList<RssItem> items = new ArrayList<>();
+        ArrayList<RssItemModel> items = new ArrayList<>();
 
         try {
             XmlPullParser xmlPullParser = Xml.newPullParser();
@@ -144,7 +138,7 @@ public class RssLoader {
 
                 if (title != null && link != null && description != null) {
                     if (isItem) {
-                        RssItem item = new RssItem(title, description, link, "");
+                        RssItemModel item = new RssItemModel(title, description, link, "");
                         items.add(item);
                     } else {
                         //  mChannel = new Channel("", title, link, description);

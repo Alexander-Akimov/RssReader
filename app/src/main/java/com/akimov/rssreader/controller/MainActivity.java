@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.akimov.rssreader.R;
 import com.akimov.rssreader.adapters.ItemViewClick;
 import com.akimov.rssreader.adapters.RssRecycleAdapter;
+import com.akimov.rssreader.databinding.AddChannelDialogBinding;
 import com.akimov.rssreader.databinding.AddChannelDialogBinding;
 import com.akimov.rssreader.model.Channel;
 import com.akimov.rssreader.model.RssItem;
@@ -36,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<Channel> mChannelsAdapter;
     private RssRecycleAdapter mRssRecycleAdapter;
     private ProgressBar progressBar;
-    DrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
+    private ImageView addChannelBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        addChannelBtn = findViewById(R.id.addChannelBtn);
+        addChannelBtn.setOnClickListener(view -> addChannelBtnClicked(view));
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
