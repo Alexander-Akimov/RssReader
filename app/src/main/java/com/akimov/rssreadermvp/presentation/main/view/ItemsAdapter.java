@@ -1,5 +1,6 @@
 package com.akimov.rssreadermvp.presentation.main.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.akimov.rssreader.R;
-import com.akimov.rssreadermvp.model.RssItemModel;
+import com.akimov.rssreadermvp.business.models.RssPost;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,11 +21,11 @@ import javax.inject.Inject;
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
 
     private final LayoutInflater layoutInflater;
-    private List<RssItemModel> mItems;
+    private List<RssPost> mItems;
     private ItemViewClick mItemClick;
 
     @Inject
-    public ItemsAdapter(Context context) {
+    public ItemsAdapter(Activity context) {
         this.layoutInflater =
                 (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mItems = Collections.emptyList();
@@ -41,7 +42,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        RssItemModel item = mItems.get(position);
+        RssPost item = mItems.get(position);
         holder.bindRssItem(item, mItemClick);
     }
 
@@ -54,7 +55,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
         mItemClick = itemClick;
     }
 
-    public void setItems(ArrayList<RssItemModel> itemsList) {
+    public void setItems(ArrayList<RssPost> itemsList) {
         mItems = null;//TODO:????
         mItems = itemsList;
     }
@@ -64,7 +65,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
         private TextView mItemTitle;
         private TextView mItemDescription;
         private TextView mItemLink;
-        private RssItemModel mItem;
+        private RssPost mItem;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -73,12 +74,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
             mItemLink = itemView.findViewById(R.id.itemLink);
         }
 
-        public void bindRssItem(RssItemModel rssItem, ItemViewClick itemClick) {
+        public void bindRssItem(RssPost rssItem, ItemViewClick itemClick) {
             mItem = rssItem;
             mItemClick = itemClick;
-            mItemTitle.setText(rssItem.title);
-            mItemDescription.setText(rssItem.description);
-            mItemLink.setText(rssItem.link);
+            mItemTitle.setText(rssItem.getTitle());
+            mItemDescription.setText(rssItem.getDescription());
+            mItemLink.setText(rssItem.getLink());
             itemView.setOnClickListener((view) -> mItemClick.handleClick(mItem));
         }
     }

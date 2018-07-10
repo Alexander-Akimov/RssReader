@@ -7,11 +7,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.akimov.rssreader.services.DataLoadingCallback;
-import com.akimov.rssreadermvp.database.ItemsRepository;
-import com.akimov.rssreadermvp.model.ChannelModel;
-import com.akimov.rssreadermvp.model.RssItemModel;
+import com.akimov.rssreadermvp.business.models.RssChannel;
+import com.akimov.rssreader.database.ItemsRepository;
+import com.akimov.rssreadermvp.business.models.RssPost;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,24 +20,24 @@ public class RssChannelService {
 
     private final String TAG = "RssChannelService";
 
-    @Inject
+
     public ItemsRepository mItemsRepository;
 
-    @Inject
+
     public RssLoader mRssLoader;
 
-    private ChannelModel selectedChannel = null;
-    private ArrayList<ChannelModel> channels = new ArrayList<>();
-    private ArrayList<RssItemModel> channelItems = new ArrayList<>();
+    private RssChannel selectedChannel = null;
+    private List<RssChannel> channels = new ArrayList<>();
+    private ArrayList<RssPost> channelItems = new ArrayList<>();
 
     private Context mContext;
 
-    @Inject
+
     RssChannelService(Context context) {
         mContext = context;
     }
 
-    public ArrayList<ChannelModel> getChannels() {
+    public List<RssChannel> getChannels() {
         this.channels = mItemsRepository.getChannels();
 
         if (this.channels.size() > 0)
@@ -45,7 +46,7 @@ public class RssChannelService {
         return channels;
     }
 
-    public ArrayList<RssItemModel> getChannelItems() {
+    public ArrayList<RssPost> getChannelItems() {
         return this.channelItems;
     }
 
@@ -80,10 +81,10 @@ public class RssChannelService {
     private class StoreItemsTask extends AsyncTask<Void, Void, Boolean> {
 
         private ItemsRepository mRepository;
-        private ArrayList<RssItemModel> mItems = new ArrayList<>();
-        private String mChannelId;
+        private ArrayList<RssPost> mItems = new ArrayList<>();
+        private long mChannelId;
 
-        StoreItemsTask(ItemsRepository repository, ArrayList<RssItemModel> items, String channelId) {
+        StoreItemsTask(ItemsRepository repository, ArrayList<RssPost> items, long channelId) {
             mRepository = repository;
             mChannelId = channelId;
             mItems.clear();

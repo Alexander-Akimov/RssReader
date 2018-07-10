@@ -1,6 +1,9 @@
 package com.akimov.rssreadermvp.di.main;
 
 
+import android.app.Activity;
+import android.content.Context;
+
 import com.akimov.rssreadermvp.services.RssLoader;
 
 import dagger.Module;
@@ -8,10 +11,16 @@ import dagger.Provides;
 
 @Module
 public class ActivityModule {
+  private final Activity _context;
 
-    @ChannelListScope
-    @Provides
-    public static RssLoader getRssLoader() {
-        return new RssLoader();
-    }
+  public ActivityModule(Activity activity) {
+    this._context = activity;
+  }
+
+  @ChannelListScope
+  @Provides
+  Activity context() {
+    return this._context;
+  }
+
 }

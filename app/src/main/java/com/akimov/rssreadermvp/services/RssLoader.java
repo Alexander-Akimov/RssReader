@@ -6,8 +6,8 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.akimov.rssreader.services.DataLoadingCallback;
-import com.akimov.rssreadermvp.model.ChannelModel;
-import com.akimov.rssreadermvp.model.RssItemModel;
+import com.akimov.rssreadermvp.business.models.RssPost;
+import com.akimov.rssreadermvp.business.models.RssChannel;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -20,18 +20,18 @@ import java.util.ArrayList;
 
 public class RssLoader {
     private final String TAG = "RssLoader";
-    private ChannelModel mChannel = null;
-    private ArrayList<RssItemModel> mChannelItems = null;
+    private RssChannel mChannel = null;
+    private ArrayList<RssPost> mChannelItems = null;
 
     public void loadRssItems(String url, DataLoadingCallback callback) {
         new FetchFeedTask(callback).execute(url);
     }
 
-    public ChannelModel getChannel() {
+    public RssChannel getChannel() {
         return mChannel;
     }
 
-    public ArrayList<RssItemModel> getChannelItems() {
+    public ArrayList<RssPost> getChannelItems() {
         return mChannelItems;
     }
 
@@ -87,12 +87,12 @@ public class RssLoader {
         return conn.getInputStream();
     }
 
-    public ArrayList<RssItemModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
+    public ArrayList<RssPost> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
         String title = null;
         String link = null;
         String description = null;
         boolean isItem = false;
-        ArrayList<RssItemModel> items = new ArrayList<>();
+        ArrayList<RssPost> items = new ArrayList<>();
 
         try {
             XmlPullParser xmlPullParser = Xml.newPullParser();
@@ -138,10 +138,10 @@ public class RssLoader {
 
                 if (title != null && link != null && description != null) {
                     if (isItem) {
-                        RssItemModel item = new RssItemModel(title, description, link, "");
+                        RssPost item = new RssPost(title, description, link, 0);
                         items.add(item);
                     } else {
-                        //  mChannel = new Channel("", title, link, description);
+                        //  mChannel = new RssChannel("", title, link, description);
                     }
 
                     title = null;

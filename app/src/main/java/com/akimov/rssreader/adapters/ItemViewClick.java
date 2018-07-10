@@ -1,7 +1,8 @@
 package com.akimov.rssreader.adapters;
 
-import com.akimov.rssreader.model.RssItem;
+
+import com.akimov.rssreadermvp.business.models.RssPost;
 
 public interface ItemViewClick {
-    void handleClick(RssItem rssItem);
+    void handleClick(RssPost rssItem);
 }

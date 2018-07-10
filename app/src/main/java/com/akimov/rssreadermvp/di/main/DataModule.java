@@ -1,16 +1,17 @@
 package com.akimov.rssreadermvp.di.main;
 
-import com.akimov.rssreadermvp.database.ItemsRepository;
-import com.akimov.rssreadermvp.database.ItemsRepositoryImpl;
-import com.akimov.rssreadermvp.di.main.ChannelListScope;
+import com.akimov.rssreadermvp.business.IMainRepository;
+import com.akimov.rssreadermvp.data.MainRepositoryImpl;
+import com.akimov.rssreadermvp.services.RssLoader;
 
 import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public interface DataModule {
 
-    @ChannelListScope
-    @Binds
-    ItemsRepository repository(ItemsRepositoryImpl repository);
+  @ChannelListScope
+  @Binds
+  IMainRepository repository(MainRepositoryImpl repository);
 }

@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.akimov.rssreader.R;
-import com.akimov.rssreader.model.Channel;
 
 public class DialogManager {
 

@@ -1,20 +1,22 @@
 package com.akimov.rssreadermvp.presentation.main.view;
 
-import com.akimov.rssreadermvp.model.ChannelModel;
-import com.akimov.rssreadermvp.model.RssItemModel;
+import com.akimov.rssreadermvp.business.models.RssChannel;
+import com.akimov.rssreadermvp.business.models.RssPost;
 
 import java.util.ArrayList;
 
 public interface IMainView {
-    void selectChannel();
+  void selectChannel();
 
-    void renderChannelList(ArrayList<ChannelModel> channelsList);
+  void renderChannelList(ArrayList<RssChannel> channelsList);
 
-    void renderChannelItems(ArrayList<RssItemModel> channelItemsList);
+  void renderChannelItems(ArrayList<RssPost> channelItemsList);
 
-    void showLoading();
+  void showLoading();
 
-    void hideLoading();
+  void hideLoading();
 
-    void showAddChannelDialog();
+  void showAddChannelDialog();
+
+  void showEditChannelDialog(int position);
 }
