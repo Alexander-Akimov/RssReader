@@ -55,7 +55,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
         mItemClick = itemClick;
     }
 
-    public void setItems(ArrayList<RssPost> itemsList) {
+    public void setItems(List<RssPost> itemsList) {
         mItems = null;//TODO:????
         mItems = itemsList;
     }

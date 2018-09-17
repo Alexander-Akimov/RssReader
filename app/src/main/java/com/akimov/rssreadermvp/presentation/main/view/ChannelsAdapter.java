@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import com.akimov.rssreadermvp.business.models.RssChannel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -17,7 +18,7 @@ public class ChannelsAdapter extends ArrayAdapter<RssChannel> {
         super(context, android.R.layout.simple_list_item_1);
     }
 
-    public void setChannels(ArrayList<RssChannel> channels) {
+    public void setChannels(List<RssChannel> channels) {
         clear();
         addAll(channels);
         notifyDataSetChanged();

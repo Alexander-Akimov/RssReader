@@ -22,4 +22,6 @@ public interface IMainPresenter {
   void updateChannel(RssChannel channel);
 
   void addChannel(RssChannel channel);
+
+  void channelSelected(RssChannel channel);
 }

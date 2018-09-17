@@ -1,5 +1,7 @@
 package com.akimov.rssreadermvp.presentation.main.presenter;
 
+import android.util.Log;
+
 import com.akimov.rssreadermvp.business.IMainInteractor;
 import com.akimov.rssreadermvp.business.MainInteractor;
 import com.akimov.rssreadermvp.business.models.RssChannel;
@@ -8,12 +10,16 @@ import com.akimov.rssreadermvp.presentation.main.view.IMainView;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 public class MainPresenter implements IMainPresenter {
+
+  public static final String TAG = MainPresenter.class.getSimpleName();
 
   private IMainView IMainView;
 
@@ -60,15 +66,21 @@ public class MainPresenter implements IMainPresenter {
   @Override
   public void addChannel(RssChannel channel) {
     // mRssChannelService.addChannel(, this.onReloadChannels);
-    Disposable getQuotesSubscription = mainInteractor.addChannel(channel)
+    Disposable getAddChannelSubscription = mainInteractor.addChannel(channel)
         .subscribe(this::handleSuccessAddChannel, this::handleErrorAddChannel);
 
   }
 
-  private void handleErrorAddChannel(Object o) {
+  @Override
+  public void channelSelected(RssChannel channel) {
+    getItemsList(channel);
   }
 
-  private void handleSuccessAddChannel(Object o) {
+  private void handleSuccessAddChannel(Long aLong) {
+  }
+
+
+  private void handleErrorAddChannel(Object o) {
   }
 
   public void initialize() {
@@ -77,7 +89,6 @@ public class MainPresenter implements IMainPresenter {
 
   private void loadData() {
     this.getChannelList();
-    this.getItemsList();
   }
 
   private void hideViewLoading() {
@@ -88,31 +99,52 @@ public class MainPresenter implements IMainPresenter {
     this.IMainView.showLoading();
   }
 
-  private void showChannelsInView(ArrayList<RssChannel> channelList) {
+  private void showChannelsInView(List<RssChannel> channelList) {
     this.IMainView.renderChannelList(channelList);
   }
 
-  private void showChannelItemsInView(ArrayList<RssPost> itemsList) {
+  private void showErrorMessage(String message) {
+    this.IMainView.showErrorMessage(message);
+  }
+
+
+  private void showChannelPosts(List<RssPost> itemsList) {
     this.IMainView.renderChannelItems(itemsList);
-
   }
 
-  private void getChannelList() { // TODO: USE CASE
-//    ArrayList<RssChannel> channelsList = mRssChannelService.getChannels();
-//    this.showChannelsInView(channelsList);
+  private void getChannelList() {
+    Disposable getChannelsSubscription = mainInteractor.getChannels()
+        .subscribe(this::successGetChannels, this::errorGetChannels);
   }
 
-  private void getItemsList() /*{}*/ {
+  private void successGetChannels(List<RssChannel> rssChannelList) {
+    this.showChannelsInView(rssChannelList);
+
+    if (rssChannelList.size() > 0) {
+      RssChannel channel = rssChannelList.get(0);
+      getItemsList(channel);
+    }
+  }
+
+  private void errorGetChannels(Throwable throwable) {
+    Log.d(TAG, throwable.getMessage());
+    showErrorMessage("Some Error occurred");
+  }
+
+  private void getItemsList(RssChannel channel) {
     this.showViewLoading();
-//    mRssChannelService.getChannelItems((boolean success) -> {
-//          if (success) {
-//            this.showChannelItemsInView(mRssChannelService.getChannelItems());
-//
-//          }
-//          this.hideViewLoading();
-//        }
-//    );
+    Disposable subscription = mainInteractor.getChannelItems(channel)
+        .subscribe(this::successGetPosts, this::errorGetPosts);
   }
 
+  private void successGetPosts(List<RssPost> rssPosts) {
+    this.showChannelPosts(rssPosts);
+    this.hideViewLoading();
+  }
 
+  private void errorGetPosts(Throwable throwable) {
+    this.hideViewLoading();
+    Log.d(TAG, throwable.getMessage());
+    showErrorMessage("Some Error occurred");
+  }
 }

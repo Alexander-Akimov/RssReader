@@ -11,8 +11,8 @@ import io.reactivex.Single;
 /**
  * Created by lex on 6/9/18.
  */
-public interface IDataBaseStore {
-  Single insertChannel(RssChannel rssChannel);
+public interface IDBStore {
+  Single<Long> insertChannel(RssChannel rssChannel);
 
   Completable deleteChannel(RssChannel rssChannel);
 

@@ -6,12 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
-public class DataBaseHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
   private static final int VERSION = 1;
   private static final String DATABASE_NAME = "rssReaderBase.db";
 
-  public DataBaseHelper(@NonNull Context context) {
+  public DBHelper(@NonNull Context context) {
     super(context, DATABASE_NAME, null, VERSION);
   }
 
@@ -24,7 +24,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
   }
 
   @Override
-  public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     db.execSQL(RssChannelTable.SQL_DROP_CHANNEL_TABLE);
     db.execSQL(RssPostTable.SQL_DROP_ITEMS_TABLE);
 

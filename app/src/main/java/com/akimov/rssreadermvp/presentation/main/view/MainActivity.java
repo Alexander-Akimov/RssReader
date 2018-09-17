@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,11 +32,13 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class MainActivity extends AppCompatActivity implements IMainView {
@@ -83,11 +86,10 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
     progressBar.setVisibility(View.INVISIBLE);
 
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
+        R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     mDrawerLayout.addDrawerListener(toggle);
     toggle.syncState();
-
-    addChannelBtn.setOnClickListener(view -> this.mainPresenter.addChannelClicked());
 
     initInjector();
 
@@ -124,17 +126,24 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     }
   }
 
+  @OnClick(R.id.addChannelBtn)
+  public void addChannelClicked(View view) {
+    this.mainPresenter.addChannelClicked();
+  }
+
+  @Override
   public void selectChannel() {
 
   }
 
-  public void renderChannelList(ArrayList<RssChannel> channelsList) {
+  @Override
+  public void renderChannelList(List<RssChannel> channelsList) {
     if (channelsList != null) {
       this.mChannelsAdapter.setChannels(channelsList);
     }
   }
 
-  public void renderChannelItems(ArrayList<RssPost> channelItemsList) {
+  public void renderChannelItems(List<RssPost> channelItemsList) {
     if (channelItemsList != null) {
       this.mItemsAdapter.setItems(channelItemsList);
       this.mItemsAdapter.notifyDataSetChanged();
@@ -148,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
   public void hideLoading() {
     progressBar.setVisibility(View.INVISIBLE);
   }
+
 
   @Override
   public void showAddChannelDialog() {
@@ -195,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     });
   }
 
+  @Override
+  public void showErrorMessage(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+  }
+
   private void setupItemsRecyclerView() {
     mItemsAdapter.setOnItemClickListener(onItemClicked);
     channelItemsView.setAdapter(mItemsAdapter);
@@ -205,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
   private void setupChannelListView() {
     channelList.setAdapter(mChannelsAdapter);
-    //channelList.setOnItemClickListener(onChannelClickListener);
+    channelList.setOnItemClickListener(onChannelClickListener);
     channelList.setOnMenuItemClickListener(onMenuItemClickListener);
     channelList.setMenuCreator(menu -> {
       // create "open" item
@@ -257,6 +272,10 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     return false;
   };
 
+  private AdapterView.OnItemClickListener onChannelClickListener = (adapterView, view, i, l) -> {
+    mainPresenter.channelSelected(mChannelsAdapter.getItem(i));
+    mDrawerLayout.closeDrawer(GravityCompat.START);
+  };
 
   private ItemViewClick onItemClicked = (RssPost rssItem) -> {
     //TODO: open item activity

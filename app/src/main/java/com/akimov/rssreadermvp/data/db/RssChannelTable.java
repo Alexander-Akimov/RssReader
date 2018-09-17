@@ -11,15 +11,15 @@ public final class RssChannelTable implements BaseColumns {
   public static final String LINK = "link";
 
   static final String SQL_CREATE_CHANNEL_TABLE =
-      "CREATE TABLE " + RssChannelTable.TABLE_NAME + "(" +
-          RssChannelTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-          RssChannelTable.TITLE + " TEXT NOT NULL, " +
-          RssChannelTable.DESCRIPTION + " TEXT NOT NULL, " +
-          RssChannelTable.LINK + " TEXT NOT NULL, " +
-          "UNIQUE (" + RssChannelTable._ID + ") ON CONFLICT REPLACE )";
+      "CREATE TABLE " + TABLE_NAME + "(" +
+          _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          TITLE + " TEXT NOT NULL, " +
+          DESCRIPTION + " TEXT NOT NULL, " +
+          LINK + " TEXT NOT NULL, " +
+          "UNIQUE (" + _ID + ") ON CONFLICT REPLACE )";
 
   static final String SQL_DROP_CHANNEL_TABLE =
-      "DROP TABLE IF EXISTS " + RssChannelTable.TABLE_NAME;
+      "DROP TABLE IF EXISTS " + TABLE_NAME;
 }
 
 

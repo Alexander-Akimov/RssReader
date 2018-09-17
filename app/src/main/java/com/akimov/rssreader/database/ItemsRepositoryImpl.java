@@ -11,7 +11,7 @@ import com.akimov.rssreadermvp.data.db.RssChannelCursorWrapper;
 import com.akimov.rssreadermvp.data.db.RssChannelTable;
 
 import com.akimov.rssreadermvp.business.models.RssPost;
-import com.akimov.rssreadermvp.data.db.DataBaseHelper;
+import com.akimov.rssreadermvp.data.db.DBHelper;
 import com.akimov.rssreadermvp.data.db.RssPostCursorWrapper;
 import com.akimov.rssreadermvp.data.db.RssPostTable;
 
@@ -24,7 +24,7 @@ public class ItemsRepositoryImpl implements ItemsRepository {
   private SQLiteDatabase mDatabase;
 
   public ItemsRepositoryImpl(Context context) {
-    SQLiteDatabase db = new DataBaseHelper(context)
+    SQLiteDatabase db = new DBHelper(context)
         .getWritableDatabase();
 
     mDatabase = db;

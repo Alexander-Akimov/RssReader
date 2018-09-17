@@ -4,8 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.akimov.rssreadermvp.business.models.RssChannel;
-import com.akimov.rssreadermvp.business.models.RssPost;
-import com.akimov.rssreadermvp.data.db.DataBaseHelper;
+import com.akimov.rssreadermvp.data.db.DBHelper;
 import com.pushtorefresh.storio3.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.impl.DefaultStorIOSQLite;
@@ -21,11 +20,11 @@ public class StorIOFactory {
       return INSTANCE;
     }
     INSTANCE = DefaultStorIOSQLite.builder()
-        .sqliteOpenHelper(new DataBaseHelper(context))
+        .sqliteOpenHelper(new DBHelper(context))
         .addTypeMapping(RssChannel.class, SQLiteTypeMapping.<RssChannel>builder()
             .putResolver(new RssChannelPutResolver())
             .getResolver(new RssChannelGetResolver())
-            .deleteResolver(new RssChannelDeleteResolver())
+            .deleteResolver(new RssChannelDeleteResolver())//createDeleteResolver()
             .build())
       /*  .addTypeMapping(RssPost.class, SQLiteTypeMapping.<RssPost>builder()
             .putResolver()

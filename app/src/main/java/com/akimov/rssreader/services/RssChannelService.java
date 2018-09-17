@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class RssChannelService {
 
+  private final String TAG = RssChannelService.class.getSimpleName();
+
   public ArrayList<RssChannel> channels = new ArrayList<>();
   public ArrayList<RssPost> channelItems = new ArrayList<>();
   private Context mContext;
@@ -23,8 +25,6 @@ public class RssChannelService {
 
   public RssChannel selectedChannel = null;
   //private RssChannel loadedChannel = null;
-
-  private final String TAG = RssChannelService.class.getSimpleName();
 
   private static RssChannelService sInstance;
 

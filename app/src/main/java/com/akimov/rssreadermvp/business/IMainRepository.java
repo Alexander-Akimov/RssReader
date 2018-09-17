@@ -5,6 +5,7 @@ import com.akimov.rssreadermvp.business.models.RssPost;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -17,7 +18,7 @@ public interface IMainRepository {
   //Observable<List<ChannelEntity>> getChannels();
   Observable<List<RssChannel>> getChannels();
 
-  Observable<List<RssPost>> getChannelItems(String id);
+  Observable<List<RssPost>> getChannelItems(RssChannel channel);
 
-  Single addChannel(RssChannel channel);
+  Single<Long> addChannel(RssChannel channel);
 }
